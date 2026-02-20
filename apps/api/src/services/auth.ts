@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { generateOTP } from "../utils";
 
-const resend = new Resend("re_LsDDN7y6_HRBXYCZjmFUqMCes4BMXrRf2");
+const resend = new Resend(process.env.RESEND_KEY);
 
 export const sendEmailToUser = async (email: string, message?: string) => {
   const otp = generateOTP();
