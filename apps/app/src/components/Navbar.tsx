@@ -1,7 +1,9 @@
 // Navbar.jsx
-import { IdCard } from "lucide-react";
+import { IdCard, LucidePlus } from "lucide-react";
+import Button from "./common/Button";
 
 export default function Navbar({ userName = "Simran Panthi", onPostEvent }: { userName?: string; onPostEvent: () => void }) {
+
     return (
         <header className="w-full bg-white px-4 py-3 border border-stone-200">
             <div className="flex items-center justify-between gap-3">
@@ -22,13 +24,15 @@ export default function Navbar({ userName = "Simran Panthi", onPostEvent }: { us
                 </div>
 
                 {/* right */}
-                <button
+                <Button
                     type="button"
                     onClick={onPostEvent}
-                    className="shrink-0 rounded-xl bg-(--accent) px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm font-semibold text-white hover:bg-(--surface) hover:text-(--accent) border border-(--accent) cursor-pointer whitespace-nowrap"
+                    icon={LucidePlus}
+                    iconPosition="left"
+                    className="shrink-0 bg-(--accent) px-4 sm:px-6 sm:py-3 text-xs sm:text-sm font-semibold text-white hover:bg-(--surface) hover:text-(--accent) border border-(--accent) cursor-pointer whitespace-nowrap"
                 >
-                    + Post Event
-                </button>
+                    Post an event
+                </Button>
             </div>
         </header>
     );
