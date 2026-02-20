@@ -6,7 +6,7 @@ type Poster = {
 };
 
 export default function Board() {
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(0.36);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -80,7 +80,7 @@ export default function Board() {
       e.preventDefault();
       const distance = getDistance(e.touches[0], e.touches[1]);
       const scale = distance / pinchStartDistance;
-      const newZoom = Math.max(0.5, Math.min(2, pinchStartZoom * scale));
+      const newZoom = Math.max(0.25, Math.min(2, pinchStartZoom * scale));
       setZoom(newZoom);
     } else if (e.touches.length === 1 && isDragging) {
       // Single touch drag
@@ -100,11 +100,9 @@ export default function Board() {
 
   // Handle wheel zoom
   const handleWheel = (e: React.WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      setZoom((prevZoom) => Math.max(0.5, Math.min(2, prevZoom * delta)));
-    }
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setZoom((prevZoom) => Math.max(0.25, Math.min(2, prevZoom * delta)));
   };
 
   // Add global mouse event listeners for dragging
@@ -156,7 +154,7 @@ export default function Board() {
 
   return (
     <div 
-      className="relative h-screen w-screen overflow-hidden"
+      className="relative h-full w-full overflow-hidden"
       ref={containerRef}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -172,9 +170,9 @@ export default function Board() {
         <span className="text-sm font-medium min-w-[50px]">{Math.round(zoom * 100)}%</span>
         <input
           type="range"
-          min="0.5"
+          min="0.25"
           max="2"
-          step="0.1"
+          step="0.01"
           value={zoom}
           onChange={(e) => setZoom(parseFloat(e.target.value))}
           className="w-32"

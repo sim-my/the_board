@@ -1,19 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import Navbar from './components/Navbar'
+import Board from './components/Board/Board'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const handlePostEvent = () => {
+    // TODO: Implement post event functionality
+    console.log('Post event clicked')
+  }
 
   return (
-    <>
-      <div>
-        <h1 className="text-3xl font-bold underline">
-          Hello world!
-        </h1>
+    <div className="flex flex-col h-screen overflow-hidden">
+      <Navbar onPostEvent={handlePostEvent} />
+      <div className="flex-1 overflow-hidden">
+        <Board />
       </div>
-    </>
+    </div>
   )
 }
 
