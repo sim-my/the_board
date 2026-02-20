@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import './index.css'
-import Navbar from './components/Navbar'
+import EmptyView from './pages/EmptyView'
+import Wrapper from './Wrapper';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isPostEventOpen, setIsPostEventOpen] = useState(false);
 
   return (
-    <>
-      <Navbar userName="Simran Panthi" onPostEvent={() => {}} />
-    </>
-  )
+    <Wrapper onPostEvent={() => setIsPostEventOpen(true)}>
+      <EmptyView />
+    </Wrapper>
+  );
 }
 
 export default App

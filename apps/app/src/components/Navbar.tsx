@@ -1,12 +1,13 @@
 // Navbar.jsx
 import { IdCard, LucidePlus } from "lucide-react";
 import Button from "./common/Button";
+import FilterBar from "./Filters";
 
 export default function Navbar({ userName = "Simran Panthi", onPostEvent }: { userName?: string; onPostEvent: () => void }) {
 
     return (
-        <header className="w-full bg-white px-4 py-3 border border-stone-200">
-            <div className="flex items-center justify-between gap-3">
+        <header className="w-full bg-white  border border-stone-200">
+            <div className="flex items-center justify-between gap-3 px-4 py-3">
                 {/* left */}
                 <div className="flex items-center gap-2 min-w-0">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center">
@@ -16,9 +17,8 @@ export default function Navbar({ userName = "Simran Panthi", onPostEvent }: { us
                         <h1 className="text-xl sm:text-3xl font-semibold whitespace-nowrap">
                             The Board
                         </h1>
-                        <span className="text-base sm:text-lg text-stone-400 hidden xs:inline">|</span>
                         <span className="text-sm sm:text-lg font-medium text-stone-400 truncate hidden sm:inline">
-                            {userName}
+                           | {userName}
                         </span>
                     </div>
                 </div>
@@ -33,6 +33,9 @@ export default function Navbar({ userName = "Simran Panthi", onPostEvent }: { us
                 >
                     Post an event
                 </Button>
+            </div>
+            <div className="w-full">
+                <FilterBar />
             </div>
         </header>
     );
