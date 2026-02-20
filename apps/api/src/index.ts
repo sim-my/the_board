@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config();
 
 import express from "express";
 import mainRouter from "./routes/index";
@@ -10,13 +11,7 @@ import path from "path";
 const app = express();
 const PORT = 4000;
 
-dotenv.config();
 
-// const cors_whitelist = [
-//   "http://localhost:8080",
-//   // get host from env vars
-//   "http://" + (process.env.REMOTE_HOST!.trim() || "localhost") + ":8080",
-// ];
 
 app.use(cors());
 
