@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createEventInDb, getEventsInDb, getEventByIdInDb } from "../services/event";
+import { createEventInDb, getEventByIdInDb, fetchEvents as fetchEventsFromDb } from "../services/event";
 
 
 export async function createEvent(req: Request, res: Response, next: NextFunction) {
@@ -8,14 +8,10 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
     const posterImage = req.file;
     console.log(req.body);
 
-    
-
     const tagsArray: string[] =
       typeof req.body.tags === "string"
         ? req.body.tags.split(",").map((t: string) => t.trim())
         : [];
-
-    // const dateFormatted = new Date(req.body.date);
 
     const event = await createEventInDb({
         title,
@@ -33,8 +29,19 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
 
 
 export async function getEvents(req: Request, res: Response, next: NextFunction) {
-    // const { tags } = req.query;
-    const events = await getEventsInDb();
+    const { tags, startDate, endDate, registrationDeadline } = req.query;
+
+    const tagsArray = tags
+        ? (tags as string).split(",").map((t) => t.trim()).filter(Boolean)
+        : undefined;
+
+    const events = await fetchEventsFromDb(
+        tagsArray,
+        startDate as string | undefined,
+        endDate as string | undefined,
+        registrationDeadline as string | undefined,
+    );
+
     return res.json({ events });
 }
 
@@ -42,13 +49,4 @@ export async function getEventById(req: Request, res: Response, next: NextFuncti
     const {id} = req.params;
     const event = await getEventByIdInDb(id as string);
     return res.json({ event });
-}
-
-export async function fetchEvents(req: Request, res: Response, next: NextFunction) {
-
-    // Event Query Params:
-    const { tags, startDate, endDate, registrationDate } = req.query;
-
-    
-
 }

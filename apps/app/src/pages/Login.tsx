@@ -1,9 +1,10 @@
 // OtpLogin.tsx
 import React, { useMemo, useState } from "react";
+import { authService } from "../services/auth";
 
 type Step = "email" | "otp";
 type LoginProps = {
-    onSuccess: () => void;
+    onSuccess: (email: string) => void;
 };
 
 export default function Login({ onSuccess }: LoginProps) {
@@ -14,14 +15,13 @@ export default function Login({ onSuccess }: LoginProps) {
     const [error, setError] = useState<string>("");
 
     const canSend = useMemo(() => email.trim().includes("@"), [email]);
-    const canVerify = useMemo(() => otp.trim().length === 6, [otp]);
+    const canVerify = useMemo(() => otp.trim().length === 4, [otp]);
 
     const handleSend = async () => {
         setError("");
         setLoading(true);
         try {
-            // UI-only: pretend we sent an email
-            await new Promise((r) => setTimeout(r, 700));
+            await authService.sendOtp(email);
             setStep("otp");
         } catch {
             setError("Could not send code. Try again.");
@@ -34,8 +34,14 @@ export default function Login({ onSuccess }: LoginProps) {
         setError("");
         setLoading(true);
         try {
-            await new Promise((r) => setTimeout(r, 700));
-            onSuccess(); // <-- notify parent (App)
+            const res = await authService.verifyOtp(email, otp);
+            if (res.error) {
+                setError("Invalid code. Try again.");
+                return;
+            }
+            localStorage.setItem("token", res.token);
+            localStorage.setItem("email", email);
+            onSuccess(email);
         } catch {
             setError("Invalid code. Try again.");
         } finally {
@@ -47,7 +53,9 @@ export default function Login({ onSuccess }: LoginProps) {
         setError("");
         setLoading(true);
         try {
-            await new Promise((r) => setTimeout(r, 600));
+            await authService.sendOtp(email);
+        } catch {
+            setError("Could not resend code. Try again.");
         } finally {
             setLoading(false);
         }

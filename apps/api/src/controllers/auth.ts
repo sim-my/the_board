@@ -123,6 +123,12 @@ export async function verifyOtp(
   }
 }
 
+export function logout(_req: Request, res: Response, _next: NextFunction) {
+  // JWT is stateless — actual token removal happens client-side.
+  // This endpoint exists so the client has a consistent API to call.
+  return res.json({ error: false, message: "Logged out successfully." });
+}
+
 export function deleteUserAccount(
   req: Request,
   res: Response,

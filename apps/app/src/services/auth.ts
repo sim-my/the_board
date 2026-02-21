@@ -1,17 +1,15 @@
 import { api } from "./api";
 
-export type RequestOtpResponse = { ok: true };
-export type VerifyOtpResponse = {
-  token: string;
-  user: { id: string; email: string };
-};
+export type SendOtpResponse = { error: boolean; message: string };
+export type VerifyOtpResponse = { error: boolean; token: string; isNewUser: boolean };
 
 export const authService = {
-  requestOtp: (email: string) =>
-    api.post<RequestOtpResponse>("/auth/request-otp", { email }),
+  sendOtp: (email: string) =>
+    api.post<SendOtpResponse>("/auth/sendOtp", { email }),
 
   verifyOtp: (email: string, otp: string) =>
-    api.post<VerifyOtpResponse>("/auth/verify-otp", { email, otp }),
+    api.post<VerifyOtpResponse>("/auth/verifyOtp", { email, otp }),
 
-  logout: () => api.post<{ ok: true }>("/auth/logout"),
+  logout: () =>
+    api.post<{ error: boolean; message: string }>("/auth/logout"),
 };
