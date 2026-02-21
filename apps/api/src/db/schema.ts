@@ -10,6 +10,7 @@ import {
   unique,
   boolean,
   pgPolicy,
+  bigint,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -135,3 +136,8 @@ export const attendee = pgTable(
       .onDelete("restrict"),
   ]
 );
+
+export const tag = pgTable("Tag", {
+  id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar(),
+});

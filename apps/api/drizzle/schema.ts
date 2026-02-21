@@ -1,4 +1,4 @@
-import { pgTable, uniqueIndex, foreignKey, integer, timestamp, index, text, varchar, unique, boolean, pgPolicy } from "drizzle-orm/pg-core"
+import { pgTable, uniqueIndex, foreignKey, integer, timestamp, index, text, varchar, unique, boolean, pgPolicy, bigint } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
@@ -75,3 +75,9 @@ export const event = pgTable("Event", {
 		}).onUpdate("cascade").onDelete("restrict"),
 	pgPolicy("Allow insert on Event", { as: "permissive", for: "insert", to: ["public"], withCheck: sql`true`  }),
 ]);
+
+export const tag = pgTable("Tag", {
+	// You can use { mode: "bigint" } if numbers are exceeding js number limitations
+	id: bigint({ mode: "number" }).primaryKey().generatedByDefaultAsIdentity({ name: ""Tag_id_seq"", startWith: 1, increment: 1, minValue: 1, maxValue: 9223372036854775807 }),
+	name: varchar(),
+});
