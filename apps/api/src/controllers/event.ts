@@ -19,7 +19,7 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
         date,
         affiliation,
         tagsArray,
-        creatorId: creatorEmail,
+        creatorEmail,
         registrationDeadline,
         posterImage
     });

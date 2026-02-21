@@ -26,9 +26,9 @@ export type EventItem = {
 
 export default function App() {
   // Auth + view
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!localStorage.getItem("token"));
   const [userEmail, setUserEmail] = useState<string>(() => localStorage.getItem("email") ?? "");
-  const [view, setView] = useState<View>("login");
+  const [view, setView] = useState<View>(() => localStorage.getItem("token") ? "board" : "login");
 
   // Data
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -101,14 +101,15 @@ export default function App() {
   };
 
   return (
-    <Wrapper navbar={isLoggedIn} onPostEvent={openPostEvent}  boardLayout={boardLayout} userEmail={userEmail} onFilterChange={onFilterChange} onLogout={onLogout}>
+    <Wrapper navbar={isLoggedIn} onPostEvent={openPostEvent}  boardLayout={boardLayout} userEmail={userEmail} onFilterChange={onFilterChange} onLogout={onLogout} setBoardLayout={setBoardLayout}>
       {/* Global modal */}
       <CreateEventModal
         open={isPostEventOpen}
         onClose={() => setIsPostEventOpen(false)}
-        onCreate={(payload) => {
-          console.log(payload);
+        onCreate={async (payload) => {
+          await eventsService.create(payload, userEmail);
           setIsPostEventOpen(false);
+          await loadEvents();
         }}
       />
 
@@ -126,7 +127,7 @@ export default function App() {
       )}
 
       {view === "board" && boardLayout === "booklet" && (
-        <Booklet />
+        <Booklet events={events} onOpenEvent={openEventDetail} />
       )}
 
       {view === "detail" && selectedEvent && (
