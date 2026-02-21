@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createEventInDb } from "../services/event";
+import { createEventInDb, getEventsInDb } from "../services/event";
 
 
 export async function createEvent(req: Request, res: Response, next: NextFunction) {
@@ -30,3 +30,15 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
 
     return res.json({ message: "Event created successfully!", event });
 }
+
+
+export async function getEvents(req: Request, res: Response, next: NextFunction) {
+    // const { tags } = req.query;
+    const events = await getEventsInDb();
+    return res.json({ events });
+}
+
+// export async function getEventById(req: Request, res: Response, next: NextFunction) {
+//     const { id } = req.params;
+//     const event = await getEventByIdInDb(id);
+// }

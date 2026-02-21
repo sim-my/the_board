@@ -18,6 +18,7 @@ interface CreateEventData {
 }
 
 export const createEventInDb = async (eventData: CreateEventData) => {
+
   let posterUrl: string | null = null;
 
   if (eventData.posterImage) {
@@ -73,3 +74,9 @@ export const createEventInDb = async (eventData: CreateEventData) => {
     throw new Error(`Failed to create event${pgCode ? ` [${pgCode}]` : ""}: ${message}`);
   }
 };
+
+export const getEventsInDb = async () => {
+  const events = await db.select().from(eventsTable);
+  return events;
+}
+
