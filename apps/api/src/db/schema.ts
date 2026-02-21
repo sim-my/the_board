@@ -1,13 +1,15 @@
 import {
   pgTable,
-  varchar,
-  timestamp,
-  text,
-  integer,
   uniqueIndex,
-  boolean,
-  index,
   foreignKey,
+  integer,
+  timestamp,
+  index,
+  text,
+  varchar,
+  unique,
+  boolean,
+  pgPolicy,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
@@ -31,7 +33,7 @@ export const user = pgTable(
   "User",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-    email: text().notNull().unique(),
+    email: text().notNull(),
     username: text(),
     name: text(),
     lastname: text(),
@@ -41,9 +43,10 @@ export const user = pgTable(
   (table) => [
     uniqueIndex("User_username_key").using(
       "btree",
-      table.username.asc().nullsLast().op("text_ops"),
+      table.username.asc().nullsLast().op("text_ops")
     ),
-  ],
+    unique("User_email_unique").on(table.email),
+  ]
 );
 
 export const oneTimePassword = pgTable(
@@ -61,13 +64,13 @@ export const oneTimePassword = pgTable(
     uniqueIndex("OneTimePassword_email_code_key").using(
       "btree",
       table.email.asc().nullsLast().op("text_ops"),
-      table.code.asc().nullsLast().op("text_ops"),
+      table.code.asc().nullsLast().op("text_ops")
     ),
     index("OneTimePassword_email_idx").using(
       "btree",
-      table.email.asc().nullsLast().op("text_ops"),
+      table.email.asc().nullsLast().op("text_ops")
     ),
-  ],
+  ]
 );
 
 export const event = pgTable(
@@ -80,7 +83,8 @@ export const event = pgTable(
     date: timestamp({ precision: 3, mode: "string" }).notNull(),
     affiliation: text(),
     tags: text().array(),
-    creatorId: integer("creatorId").notNull(),
+    creatorId: integer().notNull(),
+    registrationDeadline: timestamp({ precision: 3, mode: "string" }),
   },
   (table) => [
     foreignKey({
@@ -90,15 +94,21 @@ export const event = pgTable(
     })
       .onUpdate("cascade")
       .onDelete("restrict"),
-  ],
+    pgPolicy("Allow insert on Event", {
+      as: "permissive",
+      for: "insert",
+      to: ["public"],
+      withCheck: sql`true`,
+    }),
+  ]
 );
 
 export const attendee = pgTable(
   "Attendee",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
-    userId: integer("userId").notNull(),
-    eventId: integer("eventId").notNull(),
+    userId: integer().notNull(),
+    eventId: integer().notNull(),
     createdAt: timestamp({ precision: 3, mode: "string" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -107,7 +117,7 @@ export const attendee = pgTable(
     uniqueIndex("Attendee_userId_eventId_key").using(
       "btree",
       table.userId.asc().nullsLast().op("int4_ops"),
-      table.eventId.asc().nullsLast().op("int4_ops"),
+      table.eventId.asc().nullsLast().op("int4_ops")
     ),
     foreignKey({
       columns: [table.eventId],
@@ -123,5 +133,5 @@ export const attendee = pgTable(
     })
       .onUpdate("cascade")
       .onDelete("restrict"),
-  ],
+  ]
 );

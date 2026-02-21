@@ -3,19 +3,17 @@
     "target": "ES2022",
     "module": "CommonJS",
     "moduleResolution": "Node",
-
     "rootDir": "src",
     "outDir": "dist",
-
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-
     "resolveJsonModule": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["node"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"],
-  "files": ["types/express.d.ts"]
+  "files": ["src/types/express.d.ts"]
 }
