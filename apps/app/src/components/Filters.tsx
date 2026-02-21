@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import Button from "./common/Button";
+import TagSelector from "./common/TagSelector";
 
 const TAGS = ["Tag 1", "Tag 2", "Tag 3", "Tag 4", "Tag 5", "Tag 6"];
 
@@ -12,22 +13,18 @@ export default function FilterBar() {
     const [eventFrom, setEventFrom] = useState("");
     const [eventTo, setEventTo] = useState("");
 
-    const toggleTag = (tag: string) =>
-        setSelectedTags((prev) =>
-            prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-        );
 
     return (
         <div className="relative px-6 py-3 border-t border-stone-100 w-full">
             {/* Toggle button */}                <Button
-                    icon={SlidersHorizontal}
-                    iconPosition="left"
-                    size="sm"
-                    onClick={() => setOpen((v) => !v)}
-                    className={`border ${open ? "text-(--accent)  border-(--accent) bg-(--page-bg)" : " border-stone-200"}`}
-                >
-                    Filters
-                </Button>
+                icon={SlidersHorizontal}
+                iconPosition="left"
+                size="sm"
+                onClick={() => setOpen((v) => !v)}
+                className={`border ${open ? "text-(--accent)  border-(--accent) bg-(--page-bg)" : " border-stone-200"}`}
+            >
+                Filters
+            </Button>
 
             {/* Filter panel */}
             {open && (
@@ -37,20 +34,12 @@ export default function FilterBar() {
                     <div className="space-y-3">
                         <h3 className="text-sm font-semibold text-stone-700">Filter by TAG</h3>
                         <div className="flex flex-wrap gap-2">
-                            {TAGS.map((tag) => (
-                                <button
-                                    key={tag}
-                                    type="button"
-                                    onClick={() => toggleTag(tag)}
-                                    className={`rounded-lg border px-3 py-1 text-xs font-medium transition-colors cursor-pointer
-                                        ${selectedTags.includes(tag)
-                                            ? "bg-(--accent) text-white border-(--accent)"
-                                            : "bg-white text-stone-600 border-stone-200 hover:border-(--accent) hover:text-(--accent)"
-                                        }`}
-                                >
-                                    {tag}
-                                </button>
-                            ))}
+                            <TagSelector
+                                tags={TAGS}
+                                value={selectedTags}
+                                onChange={setSelectedTags}
+                                maxSelected={10}
+                            />
                         </div>
                     </div>
 

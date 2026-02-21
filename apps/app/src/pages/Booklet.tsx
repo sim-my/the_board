@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MoveLeft, MoveRight } from "lucide-react";
 
-import Button from "../common/Button";
+import Button from "../components/common/Button";
 
 export default function Booklet({}){
 

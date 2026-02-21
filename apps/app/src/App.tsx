@@ -1,21 +1,24 @@
-import Navbar from './components/Navbar'
-import Board from './components/Board/Board'
-import './App.css'
+import { useState } from 'react'
+import './index.css'
+import EmptyView from './pages/EmptyView'
+import Wrapper from './Wrapper';
+import Booklet from './pages/Booklet';
+import CreateEventModal from './components/CreateEventModal';
+import PosterDetailView from './pages/PosterDetailView';
 
 function App() {
-  const handlePostEvent = () => {
-    // TODO: Implement post event functionality
-    console.log('Post event clicked')
-  }
+  const [isPostEventOpen, setIsPostEventOpen] = useState(false);
+  const [isEventDetailOpen, setIsEventDetailOpen] = useState(true);
+
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <Navbar onPostEvent={handlePostEvent} />
-      <div className="flex-1 overflow-hidden">
-        <Board />
-      </div>
-    </div>
-  )
+    <Wrapper onPostEvent={() => setIsPostEventOpen(true)}>
+      <Booklet />
+      {/* <EmptyView /> */}
+      <CreateEventModal open={isPostEventOpen} onClose={() => setIsPostEventOpen(false)}/>    
+      <PosterDetailView open={isEventDetailOpen} onClose={() => setIsEventDetailOpen(false)} />
+    </Wrapper>
+  );
 }
 
 export default App
