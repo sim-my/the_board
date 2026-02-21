@@ -10,7 +10,7 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
 
     const tagsArray: string[] =
       typeof req.body.tags === "string"
-        ? req.body.tags.split(",").map((t: string) => t.trim())
+        ? req.body.tags.split(",").map((t: string) => t.trim()).filter(Boolean)
         : [];
 
     const event = await createEventInDb({
@@ -29,20 +29,25 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
 
 
 export async function getEvents(req: Request, res: Response, next: NextFunction) {
-    const { tags, startDate, endDate, registrationDeadline } = req.query;
+    try {
+        const { tags, startDate, endDate, registrationDeadline } = req.query;
 
-    const tagsArray = tags
-        ? (tags as string).split(",").map((t) => t.trim()).filter(Boolean)
-        : undefined;
+        const tagsArray = tags
+            ? (tags as string).split(",").map((t) => t.trim()).filter(Boolean)
+            : undefined;
 
-    const events = await fetchEventsFromDb(
-        tagsArray,
-        startDate as string | undefined,
-        endDate as string | undefined,
-        registrationDeadline as string | undefined,
-    );
+        const events = await fetchEventsFromDb(
+            tagsArray,
+            startDate as string | undefined,
+            endDate as string | undefined,
+            registrationDeadline as string | undefined,
+        );
 
-    return res.json({ events });
+        return res.json({ events });
+    } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to fetch events";
+        return res.status(500).json({ error: true, message });
+    }
 }
 
 export async function getEventById(req: Request, res: Response, next: NextFunction) {
