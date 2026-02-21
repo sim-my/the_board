@@ -154,7 +154,7 @@ export default function Board() {
 
   return (
     <div 
-      className="relative h-full w-full overflow-hidden"
+      className="relative w-full min-h-[70vh] overflow-hidden"
       ref={containerRef}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
