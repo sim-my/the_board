@@ -2,8 +2,14 @@
 import { IdCard, LucidePlus } from "lucide-react";
 import Button from "./common/Button";
 import FilterBar from "./Filters";
+import type { FilterProps } from "../App";
 
-export default function Navbar({ userName = "simranpanthi101@gmail.com", onPostEvent }: { userName?: string; onPostEvent: () => void }) {
+type NavbarProps = {
+    userName?: string;
+    onPostEvent: () => void;
+    filterProps: FilterProps;
+};
+export default function Navbar({ userName = "simranpanthi101@gmail.com", onPostEvent, filterProps }: NavbarProps) {
 
     return (
         <header className="w-full bg-white  border border-stone-200">
@@ -35,7 +41,7 @@ export default function Navbar({ userName = "simranpanthi101@gmail.com", onPostE
                 </Button>
             </div>
             <div className="w-full">
-                <FilterBar />
+                <FilterBar all_tags={filterProps?.tags} filters={filterProps?.filters} onChange={filterProps?.onChange   }/>
             </div>
         </header>
     );

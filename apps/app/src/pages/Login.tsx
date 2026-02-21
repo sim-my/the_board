@@ -14,7 +14,7 @@ export default function Login({ onSuccess }: LoginProps) {
     const [error, setError] = useState<string>("");
 
     const canSend = useMemo(() => email.trim().includes("@"), [email]);
-    const canVerify = useMemo(() => otp.trim().length === 6, [otp]);
+    const canVerify = useMemo(() => otp.trim().length === 4, [otp]);
 
     const handleSend = async () => {
         setError("");
@@ -110,7 +110,7 @@ export default function Login({ onSuccess }: LoginProps) {
                                 <input
                                     value={otp}
                                     onChange={(e) =>
-                                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                                        setOtp(e.target.value)
                                     }
                                     placeholder="1234"
                                     inputMode="numeric"
