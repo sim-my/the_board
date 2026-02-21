@@ -1,6 +1,6 @@
 import { db } from "../db";
 import { event as eventsTable } from "../db/schema";
-import { eq } from 'drizzle-orm';
+import { and, gte, lte, sql } from 'drizzle-orm';
 import { nanoid } from "nanoid";
 import { createClient } from "@supabase/supabase-js";
 
@@ -10,9 +10,10 @@ interface CreateEventData {
   title: string;
   description: string;
   date: string;
+  registrationDeadline: string;
   affiliation?: string;
   tags?: string[];
-  creatorEmail: string;
+  creatorId: number;
   posterImage?: Express.Multer.File;
 }
 
@@ -39,15 +40,41 @@ export const createEventInDb = async (eventData: CreateEventData) => {
   }
 
   const newEvent = await db.insert(eventsTable).values({
-    id: nanoid(),
+    // id: nanoid(),
     title: eventData.title,
     description: eventData.description,
     date: eventData.date,
+    registrationDeadline: eventData.registrationDeadline,
     affiliation: eventData.affiliation || null,
     tags: eventData.tags || [],
-    creatorEmail: eventData.creatorEmail,
+    creatorId: eventData.creatorId,
     posterUrl: posterUrl,
   }).returning();
 
   return newEvent[0];
+};
+
+export const fetchEvents = async (tags?: string[], startDate?: string, endDate?: string, registrationDeadline?: string) => {
+  const conditions = [];
+
+  if (tags && tags.length > 0) {
+    conditions.push(sql`${eventsTable.tags} && ARRAY[${sql.join(tags.map((t) => sql`${t}`), sql`, `)}]::text[]`);
+  }
+
+  if (startDate) {
+    conditions.push(gte(eventsTable.date, startDate));
+  }
+
+  if (endDate) {
+    conditions.push(lte(eventsTable.date, endDate));
+  }
+
+  if (registrationDeadline) {
+    conditions.push(gte(eventsTable.registrationDeadline, registrationDeadline));
+  }
+
+  return db
+    .select()
+    .from(eventsTable)
+    .where(conditions.length > 0 ? and(...conditions) : undefined);
 };

@@ -4,7 +4,7 @@ import { createEventInDb } from "../services/event";
 
 export async function createEvent(req: Request, res: Response, next: NextFunction) {
     // I don't like that there is not validation here, but it's ok for now.
-    const { title, description, date, affiliation, tags, creatorEmail} = req.body;
+    const { title, description, date, affiliation, tags, creatorEmail, registrationDeadline} = req.body;
     const posterImage = req.file;
 
 
@@ -14,9 +14,19 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
         date,
         affiliation,
         tags,
-        creatorEmail,
+        creatorId: creatorEmail,
+        registrationDeadline,
         posterImage,
     });
 
     return res.json({ message: "Event created successfully!", event });
+}
+
+export async function fetchEvents(req: Request, res: Response, next: NextFunction) {
+
+    // Event Query Params:
+    const { tags, startDate, endDate, registrationDate } = req.query;
+
+    
+
 }

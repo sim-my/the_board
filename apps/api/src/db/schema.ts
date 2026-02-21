@@ -78,6 +78,7 @@ export const event = pgTable(
     description: varchar({ length: 1500 }).notNull(),
     title: text().notNull(),
     date: timestamp({ precision: 3, mode: "string" }).notNull(),
+	registrationDeadline: timestamp({ precision: 3, mode: "string" }).notNull(),
     affiliation: text(),
     tags: text().array(),
     creatorId: integer("creatorId").notNull(),
