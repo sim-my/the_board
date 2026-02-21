@@ -8,7 +8,7 @@ if (!process.env.RESEND_KEY) {
 const resend = new Resend(process.env.RESEND_KEY);
 
 export const sendEmailToUser = async (email: string, message?: string) => {
-  const otp = generateOTP();
+
 
   const { data } = await resend.emails.send({
     from: "Emmanuel from TheBoard <hello@jointheboard.space>",
@@ -17,7 +17,7 @@ export const sendEmailToUser = async (email: string, message?: string) => {
     template: {
       id: "identity-verification-otp",
       variables: {
-        OTP: otp,
+        OTP: message!,
       },
     },
   });

@@ -15,7 +15,7 @@ export const attendeeRelations = relations(attendee, ({one}) => ({
 export const eventRelations = relations(event, ({one, many}) => ({
 	attendees: many(attendee),
 	user: one(user, {
-		fields: [event.creatorEmail],
+		fields: [event.creatorId],
 		references: [user.email]
 	}),
 }));
