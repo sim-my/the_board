@@ -33,6 +33,33 @@ async function fetchEvents(): Promise<EventItem[]> {
       tags: ["Tag 1", "Tag 2"],
       counts: { going: 12, maybe: 5, not_going: 2 },
     },
+    {
+      id: "2",
+      title: "Sample Event",
+      posterUrl: "/sample_posters/poster_1.png",
+      registrationDeadline: "2023-01-01",
+      eventDate: "2023-01-01",
+      tags: ["Tag 1", "Tag 2"],
+      counts: { going: 12, maybe: 5, not_going: 2 },
+    },
+    {
+      id: "3",
+      title: "Sample Event",
+      posterUrl: "/sample_posters/poster_1.png",
+      registrationDeadline: "2023-01-01",
+      eventDate: "2023-01-01",
+      tags: ["Tag 1", "Tag 2"],
+      counts: { going: 12, maybe: 5, not_going: 2 },
+    },
+    {
+      id: "4",
+      title: "Sample Event",
+      posterUrl: "/sample_posters/random_poster.jpg",
+      registrationDeadline: "2023-01-01",
+      eventDate: "2023-01-01",
+      tags: ["Tag 1", "Tag 2"],
+      counts: { going: 12, maybe: 5, not_going: 2 },
+    },
   ];
 }
 
