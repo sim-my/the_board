@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CreateEventModal from "./components/CreateEventModal";
 import Wrapper from "./Wrapper";
 import Login from "./pages/Login";
