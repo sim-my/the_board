@@ -32,6 +32,17 @@ function mapEvent(e: ApiEvent): EventItem {
   };
 }
 
+export type CreateEventPayload = {
+  title: string;
+  description: string;
+  registrationDeadline: string;
+  eventDate: string;
+  tags: string[];
+  poster: File | null;
+};
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:3000";
+
 export const eventsService = {
   list: async (filters?: EventFilters): Promise<EventItem[]> => {
     const params = new URLSearchParams();
@@ -40,7 +51,30 @@ export const eventsService = {
     if (filters?.endDate) params.set("endDate", filters.endDate);
     if (filters?.registrationDeadline) params.set("registrationDeadline", filters.registrationDeadline);
     const query = params.toString();
-    const res = await api.get<{ events: ApiEvent[] }>(`/api/event/getEvents${query ? `?${query}` : ""}`);
+    const res = await api.get<{ events: ApiEvent[] }>(`/event/getEvents${query ? `?${query}` : ""}`);
     return res.events.map(mapEvent);
+  },
+
+  create: async (payload: CreateEventPayload, creatorEmail: string): Promise<void> => {
+    const form = new FormData();
+    form.append("title", payload.title);
+    form.append("description", payload.description);
+    form.append("date", payload.eventDate);
+    form.append("registrationDeadline", payload.registrationDeadline);
+    form.append("tags", payload.tags.join(","));
+    form.append("creatorEmail", creatorEmail);
+    if (payload.poster) form.append("posterImage", payload.poster);
+
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/event/createEvent`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data?.message ?? "Failed to create event");
+    }
   },
 };

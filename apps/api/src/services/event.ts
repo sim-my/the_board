@@ -13,7 +13,7 @@ interface CreateEventData {
   registrationDeadline: string;
   affiliation?: string;
   tagsArray?: string[];
-  creatorId: number;
+  creatorEmail: string;
   posterImage?: Express.Multer.File;
 }
 
@@ -47,11 +47,11 @@ export const createEventInDb = async (eventData: CreateEventData) => {
     const [creator] = await db
       .select({ id: userTable.id })
       .from(userTable)
-      .where(eq(userTable.id, eventData.creatorId))
+      .where(eq(userTable.email, eventData.creatorEmail))
       .limit(1);
 
     if (!creator) {
-      throw new Error(`User not found: ${eventData.creatorId}`);
+      throw new Error(`User not found: ${eventData.creatorEmail}`);
     }
 
     const newEvent = await db.insert(eventsTable).values({

@@ -205,7 +205,12 @@ export default function Board({ events, loading, error, onOpenEvent }: BoardProp
                     alt={event.title}
                     className="h-48 w-full object-cover rounded mb-2"
                   />
-                  <p className="font-semibold text-sm">{event.title}</p>
+                  <p className="font-semibold text-sm mb-2">{event.title}</p>
+                  <div className="flex gap-3 text-xs text-stone-500">
+                    <span><span className="font-semibold text-green-600">{event.counts.going}</span> Going</span>
+                    <span><span className="font-semibold text-yellow-500">{event.counts.maybe}</span> Maybe</span>
+                    <span><span className="font-semibold text-red-400">{event.counts.not_going}</span> Not going</span>
+                  </div>
                 </>
               ) : null}
             </div>

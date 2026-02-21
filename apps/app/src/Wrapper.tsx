@@ -7,7 +7,7 @@ export default function Wrapper({ navbar, children, onPostEvent, userEmail, onFi
     return (
         <div className="min-h-screen bg-(--page-bg)">
         {navbar &&
-                <Navbar onPostEvent={onPostEvent} boardLayout={boardLayout} setBoardLayout={setBoardLayout userName={userEmail} onFilterChange={onFilterChange} onLogout={onLogout} />
+                <Navbar onPostEvent={onPostEvent} boardLayout={boardLayout} setBoardLayout={setBoardLayout} userName={userEmail} onFilterChange={onFilterChange} onLogout={onLogout} />
             }
             <main className="px-6 py-6">
                 {children}

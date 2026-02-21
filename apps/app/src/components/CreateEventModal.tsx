@@ -2,19 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import PosterUploaderDropzone from "./PosterUploader";
 import TagSelector from "./common/TagSelector";
-
-export type CreateEventPayload = {
-    title: string;
-    registrationDeadline: string; // yyyy-mm-dd
-    eventDate: string; // yyyy-mm-dd
-    tags: string[];
-    poster: File | null;
-};
+import type { CreateEventPayload } from "../services/event";
 
 type Props = {
     open: boolean;
     onClose: () => void;
-    onCreate: (payload: CreateEventPayload) => void; // parent handles saving
+    onCreate: (payload: CreateEventPayload) => Promise<void>;
     title?: string;
 };
 
@@ -29,8 +22,10 @@ export default function CreateEventModal({
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [poster, setPoster] = useState<File | null>(null);
     const [eventTitle, setEventTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
     const [registrationDeadline, setRegistrationDeadline] = useState<string>("");
     const [eventDate, setEventDate] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>("");
 
     // Close on ESC
@@ -47,34 +42,43 @@ export default function CreateEventModal({
         setSelectedTags([]);
         setPoster(null);
         setEventTitle("");
+        setDescription("");
         setRegistrationDeadline("");
         setEventDate("");
         setError("");
+        setLoading(false);
     }, [open]);
 
     const canSubmit = useMemo(() => {
         return (
             eventTitle.trim().length > 0 &&
+            description.trim().length > 0 &&
             registrationDeadline.length > 0 &&
             eventDate.length > 0
         );
-    }, [eventTitle, registrationDeadline, eventDate]);
+    }, [eventTitle, description, registrationDeadline, eventDate]);
 
-    const submit = () => {
+    const submit = async () => {
         setError("");
-
         if (!canSubmit) {
-            setError("Please fill in title, registration deadline, and event date.");
+            setError("Please fill in title, description, registration deadline, and event date.");
             return;
         }
-
-        onCreate({
-            title: eventTitle.trim(),
-            registrationDeadline,
-            eventDate,
-            tags: selectedTags,
-            poster,
-        });
+        setLoading(true);
+        try {
+            await onCreate({
+                title: eventTitle.trim(),
+                description: description.trim(),
+                registrationDeadline,
+                eventDate,
+                tags: selectedTags,
+                poster,
+            });
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Something went wrong.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!open) return null;
@@ -117,6 +121,17 @@ export default function CreateEventModal({
                             />
                         </div>
 
+                        <div>
+                            <label className="text-sm font-medium">Description</label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                rows={3}
+                                className="mt-1 w-full rounded-xl border border-stone-200 px-4 py-3 text-sm outline-none focus:border-stone-300 resize-none"
+                                placeholder="What is this event about?"
+                            />
+                        </div>
+
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <label className="text-sm font-medium">
@@ -153,15 +168,15 @@ export default function CreateEventModal({
                         <button
                             type="button"
                             onClick={submit}
-                            disabled={!canSubmit}
+                            disabled={!canSubmit || loading}
                             className={[
                                 "mt-2 w-full rounded-xl px-4 py-3 text-sm font-semibold transition",
-                                canSubmit
+                                canSubmit && !loading
                                     ? "bg-(--accent) text-white hover:border hover:border-(--accent) hover:text-(--accent) cursor-pointer"
                                     : "bg-stone-200 text-stone-500 cursor-not-allowed",
                             ].join(" ")}
                         >
-                            Pin to the Board
+                            {loading ? "Posting..." : "Pin to the Board"}
                         </button>
                     </div>
                 </div>
