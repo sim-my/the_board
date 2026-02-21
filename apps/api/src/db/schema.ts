@@ -110,6 +110,7 @@ export const attendee = pgTable(
     id: integer().primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
     userId: integer().notNull(),
     eventId: integer().notNull(),
+    status: varchar({ length: 20 }).notNull().default("going"),
     createdAt: timestamp({ precision: 3, mode: "string" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

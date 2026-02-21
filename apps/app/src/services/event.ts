@@ -18,6 +18,9 @@ type ApiEvent = {
   tags: string[] | null;
   creatorId: number;
   registrationDeadline: string | null;
+  going: number;
+  maybe: number;
+  not_going: number;
 };
 
 function mapEvent(e: ApiEvent): EventItem {
@@ -28,7 +31,7 @@ function mapEvent(e: ApiEvent): EventItem {
     eventDate: e.date,
     registrationDeadline: e.registrationDeadline ?? "",
     tags: e.tags ?? [],
-    counts: { going: 0, maybe: 0, not_going: 0 },
+    counts: { going: e.going ?? 0, maybe: e.maybe ?? 0, not_going: e.not_going ?? 0 },
   };
 }
 

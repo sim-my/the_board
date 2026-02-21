@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import AttendanceSelector, { type AttendanceStatus } from "../components/AttendanceSelector";
 import type { EventItem } from "../App";
+import { attendanceService } from "../services/attendance";
 
 type Props = {
     event: EventItem;
@@ -10,6 +11,15 @@ type Props = {
 
 export default function PosterDetailView({ event, onClose }: Props) {
     const [myStatus, setMyStatus] = useState<AttendanceStatus>(null);
+    const [counts, setCounts] = useState(event.counts);
+
+    // Load current user's RSVP status when modal opens
+    useEffect(() => {
+        attendanceService.get(event.id).then((res) => {
+            setMyStatus(res.myStatus);
+            setCounts(res.counts);
+        }).catch(() => {});
+    }, [event.id]);
 
     // Close on ESC
     useEffect(() => {
@@ -17,6 +27,18 @@ export default function PosterDetailView({ event, onClose }: Props) {
         window.addEventListener("keydown", onKeyDown);
         return () => window.removeEventListener("keydown", onKeyDown);
     }, [onClose]);
+
+    const handleStatusChange = async (next: AttendanceStatus) => {
+        const prev = myStatus;
+        setMyStatus(next); // optimistic
+        try {
+            const res = await attendanceService.set(event.id, next);
+            setMyStatus(res.myStatus);
+            setCounts(res.counts);
+        } catch {
+            setMyStatus(prev); // revert on failure
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-50">
@@ -65,8 +87,8 @@ export default function PosterDetailView({ event, onClose }: Props) {
 
                             <AttendanceSelector
                                 value={myStatus}
-                                onChange={setMyStatus}
-                                counts={event.counts}
+                                onChange={handleStatusChange}
+                                counts={counts}
                             />
                         </div>
                     </div>

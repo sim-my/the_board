@@ -1,5 +1,5 @@
 import { db } from "../db";
-import { event as eventsTable, user as userTable } from "../db/schema";
+import { event as eventsTable, user as userTable, attendee } from "../db/schema";
 import { eq, and, gte, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { createClient } from "@supabase/supabase-js";
@@ -105,7 +105,22 @@ export const fetchEvents = async (tags?: string[], startDate?: string, endDate?:
   }
 
   return db
-    .select()
+    .select({
+      id: eventsTable.id,
+      title: eventsTable.title,
+      posterUrl: eventsTable.posterUrl,
+      description: eventsTable.description,
+      date: eventsTable.date,
+      affiliation: eventsTable.affiliation,
+      tags: eventsTable.tags,
+      creatorId: eventsTable.creatorId,
+      registrationDeadline: eventsTable.registrationDeadline,
+      going: sql<number>`count(case when ${attendee.status} = 'going' then 1 end)`.mapWith(Number),
+      maybe: sql<number>`count(case when ${attendee.status} = 'maybe' then 1 end)`.mapWith(Number),
+      not_going: sql<number>`count(case when ${attendee.status} = 'not_going' then 1 end)`.mapWith(Number),
+    })
     .from(eventsTable)
-    .where(conditions.length > 0 ? and(...conditions) : undefined);
+    .leftJoin(attendee, eq(attendee.eventId, eventsTable.id))
+    .where(conditions.length > 0 ? and(...conditions) : undefined)
+    .groupBy(eventsTable.id);
 };

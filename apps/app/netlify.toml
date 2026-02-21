@@ -1,0 +1,8 @@
+// Source - https://stackoverflow.com/a/72018599
+// Posted by ERA
+// Retrieved 2026-02-21, License - CC BY-SA 4.0
+
+    [[redirects]]
+    from = "/*"
+    to = "/index.html"
+    status = 200
