@@ -12,7 +12,7 @@ type BoardProps = {
 const persistentSlotMap = new Map<string, number>();
 let hasInitialized = false;
 
-export default function Board({ events, loading: _loading, error: _error, onOpenEvent }: BoardProps) {  const [zoom, setZoom] = useState(0.36);
+export default function Board({ events, onOpenEvent }: BoardProps) {  const [zoom, setZoom] = useState(0.36);
   const [pan, setPan] = useState({ x: 0, y: 24 }); // 24px offset to account for removed top padding
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -379,22 +379,15 @@ export default function Board({ events, loading: _loading, error: _error, onOpen
                 {event.title && (
                   <p className="font-semibold text-sm mt-2 line-clamp-2">{event.title}</p>
                 )}
-              </div>
-              {event ? (
-                <>
-                  <img
-                    src={event.posterUrl}
-                    alt={event.title}
-                    className="h-48 w-full object-cover rounded mb-2"
-                  />
+
                   <p className="font-semibold text-sm mb-2">{event.title}</p>
                   <div className="flex gap-3 text-xs text-stone-500">
                     <span><span className="font-semibold text-green-600">{event.counts.going}</span> Going</span>
                     <span><span className="font-semibold text-yellow-500">{event.counts.maybe}</span> Maybe</span>
                     <span><span className="font-semibold text-red-400">{event.counts.not_going}</span> Not going</span>
                   </div>
-                </>
-              ) : null}
+              </div>
+       
             </div>
           );
         })}
