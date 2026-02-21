@@ -1,12 +1,20 @@
 import { useState, useRef, useEffect } from "react";
+import type { EventItem } from "../App";
 
 type Poster = {
   id: string;
   title: string;
+  events: EventItem[];
 };
 
-export default function Board() {
-  const [zoom, setZoom] = useState(0.36);
+type BoardProps = {
+  events: EventItem[];
+  loading?: boolean;
+  error?: string;
+  onOpenEvent: (id: string) => void;
+};
+
+export default function Board({ events, loading, error, onOpenEvent }: BoardProps) {  const [zoom, setZoom] = useState(0.36);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -14,22 +22,22 @@ export default function Board() {
   const [pinchStartDistance, setPinchStartDistance] = useState<number | null>(null);
   const [pinchStartZoom, setPinchStartZoom] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const ROWS = 4;
   const COLUMNS = 10;
   const MAX_POSTERS = ROWS * COLUMNS;
-  
+
   const getPosterTransform = (index: number) => {
     const seed = index * 7 + 13;
     const verticalOffset = ((seed % 40) - 20) / 2; // -10px to +10px
     const horizontalOffset = (((seed * 3) % 30) - 15) / 2; // -7.5px to +7.5px
     const rotation = ((seed * 5) % 8) - 4; // -4deg to +4deg
-    
+
     return {
       transform: `translate(${horizontalOffset}px, ${verticalOffset}px) rotate(${rotation}deg)`,
     };
   };
-  
+
   // Calculate distance between two touches
   const getDistance = (touch1: React.Touch, touch2: React.Touch) => {
     const dx = touch1.clientX - touch2.clientX;
@@ -131,37 +139,18 @@ export default function Board() {
     }
   }, [isDragging, dragStart, lastPan]);
 
-  const posters: Poster[] = [
-    { id: "1", title: "Welcome poster" },
-    { id: "2", title: "Hackathon event" },
-    { id: "3", title: "Hackathon event" },
-    { id: "4", title: "Hackathon event" },
-    { id: "5", title: "Hackathon event" },
-    { id: "6", title: "Hackathon event" },
-    { id: "7", title: "Hackathon event" },
-    { id: "8", title: "Hackathon event" },
-    { id: "9", title: "Hackathon event" },
-    { id: "10", title: "Hackathon event" },
-    { id: "11", title: "Hackathon event" },
-    { id: "12", title: "Hackathon event" },
-    { id: "13", title: "Hackathon event" },
-    { id: "14", title: "Hackathon event" },
-    { id: "15", title: "Hackathon event" },
-    { id: "16", title: "Hackathon event" },
-    { id: "17", title: "Hackathon event" },
-    { id: "18", title: "Hackathon event" },
-  ].slice(0, MAX_POSTERS);
+  const posters = events.slice(0, MAX_POSTERS);
 
   return (
-    <div 
-      className="relative h-full w-full overflow-hidden"
+    <div
+      className="relative min-h-[calc(100vh-80px)] w-full overflow-hidden"
       ref={containerRef}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
-      style={{ 
+      style={{
         cursor: isDragging ? 'grabbing' : 'grab',
         userSelect: 'none'
       }}
@@ -183,8 +172,8 @@ export default function Board() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        style={{ 
-          transform: `translate(calc(-50% + ${pan.x}px), calc(-50% + ${pan.y}px)) scale(${zoom})`, 
+        style={{
+          transform: `translate(calc(-50% + ${pan.x}px), calc(-50% + ${pan.y}px)) scale(${zoom})`,
           transformOrigin: "center center",
           display: "grid",
           gridTemplateColumns: `repeat(${COLUMNS}, 256px)`,
@@ -199,19 +188,26 @@ export default function Board() {
         }}
       >
         {Array.from({ length: MAX_POSTERS }).map((_, index) => {
-          const poster = posters[index];
+          const event = posters[index];
           const transform = getPosterTransform(index);
+
           return (
             <div
-              key={poster?.id || `empty-${index}`}
-              className="bg-white border rounded shadow p-4 w-64 h-[360px]"
-              style={{ 
-                width: "256px", 
-                height: "360px",
-                ...transform
-              }}
+              key={event?.id || `empty-${index}`}
+              onClick={() => event && onOpenEvent(event.id)}
+              className="bg-white border rounded shadow p-4 w-64 h-[360px] cursor-pointer hover:shadow-lg transition"
+              style={{ ...transform }}
             >
-              {poster?.title || ""}
+              {event ? (
+                <>
+                  <img
+                    src={event.posterUrl}
+                    alt={event.title}
+                    className="h-48 w-full object-cover rounded mb-2"
+                  />
+                  <p className="font-semibold text-sm">{event.title}</p>
+                </>
+              ) : null}
             </div>
           );
         })}

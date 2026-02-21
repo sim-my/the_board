@@ -3,7 +3,7 @@ import { IdCard, LucidePlus } from "lucide-react";
 import Button from "./common/Button";
 import FilterBar from "./Filters";
 
-export default function Navbar({ userName = "Simran Panthi", onPostEvent }: { userName?: string; onPostEvent: () => void }) {
+export default function Navbar({ userName = "simranpanthi101@gmail.com", onPostEvent }: { userName?: string; onPostEvent: () => void }) {
 
     return (
         <header className="w-full bg-white  border border-stone-200">
