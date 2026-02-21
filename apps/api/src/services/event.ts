@@ -80,3 +80,7 @@ export const getEventsInDb = async () => {
   return events;
 }
 
+export const getEventByIdInDb = async (id: string) => {
+  const event = await db.select().from(eventsTable).where(eq(eventsTable.id, parseInt(id)));
+  return event;
+}

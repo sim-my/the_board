@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createEventInDb, getEventsInDb } from "../services/event";
+import { createEventInDb, getEventsInDb, getEventByIdInDb } from "../services/event";
 
 
 export async function createEvent(req: Request, res: Response, next: NextFunction) {
@@ -38,7 +38,8 @@ export async function getEvents(req: Request, res: Response, next: NextFunction)
     return res.json({ events });
 }
 
-// export async function getEventById(req: Request, res: Response, next: NextFunction) {
-//     const { id } = req.params;
-//     const event = await getEventByIdInDb(id);
-// }
+export async function getEventById(req: Request, res: Response, next: NextFunction) {
+    const {id} = req.params;
+    const event = await getEventByIdInDb(id as string);
+    return res.json({ event });
+}
